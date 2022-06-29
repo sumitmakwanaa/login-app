@@ -24,7 +24,7 @@ def login_validation():
     cursor.execute("""SELECT * FROM register WHERE 'username' LIKE 'user' AND 'password' LIKE 'pass1'""")
     app = cursor.fetchall()
     print(app)
-    return 'helloo'
+    return 'hello'
 
 
 if __name__ == '__main__':
