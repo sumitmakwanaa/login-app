@@ -1,23 +1,7 @@
-from flask import Flask, render_template, request, jsonify, session
-import psycopg2
-import psycopg2.extras
-from werkzeug.security import generate_password_hash, check_password_hash
-from flask_cors import CORS
-from datetime import timedelta
+from flask import Flask, render_template, request, redirect, url_for
+import sqlite3
 
 app = Flask(__name__)
-
-app.config['SECRET_KEY'] = 'sumitmakwanaa21327280'
-
-app.config['PERMENENT_SESSION_LIFETIME'] = timedelta(minutes = 10) 
-CORS(app)
-
-DB_HOST = 'localhost'
-DB_NAME = 'mydatabase'
-DB_USER = 'postgres'
-DB_PASS = 'sumitmakwanaa21327280'
-
-conn = psycopg2.connect(dbname = DB_NAME, user = DB_USER, password = DB_PASS, host = DB_HOST)
 
 @app.route('/')
 def login():
@@ -27,44 +11,32 @@ def login():
 def signin():
     return render_template('signin.html')
 
+@app.route('/index')
+def index():
+    return 'index'
+
 @app.route('/signup_form', methods=['POST'])
 def signup_form():
-    passhash = generate_password_hash('sumit')
-    print(passhash)
-    return passhash
-
+    if (request.method == 'POST'):
+        if  request.form['username']!="" and request.form['password'] != "":
+            username = request.form['username']
+            password = request.form['password']
+            conn = sqlite3.connect('mydatabase.db')
+            c = conn.cursor()
+            c.execute("INSERT INTO register VALUES('"+username+"','"+password+"')")
+            msg = "Register successfully"
+            print(msg)
+            conn.commit()
+            conn.close()
+        else:
+            msg = "Register failed"
+            print(msg)
+    return render_template('signin.html', msg = msg)    
+        
+            
 @app.route('/login_validation', methods=['POST'])
 def login_validation():
-    _username = request.form['username']
-    _password = request.form['password']
-    print(_password)
-    
-    if _username and _password:
-        cursor = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
-
-        sql = "SELECT * FROM register WHERE username = '%s'"
-        sql_where = (_username)
-
-        cursor.execute(sql,sql_where)
-        row = cursor.fetchone()
-        username = row['username']
-        password = row['password']
-
-        if row:
-            if check_password_hash(password,_password):
-                session['username'] = username
-                cursor.close()
-                return jsonify({'message':'You are loged in successfully'})
-            else:
-                resp = jsonify({'message':'Bad Request - Invalid Password'})
-                resp.status_code = 400
-                return resp
-
-    else:
-        resp = jsonify({'message': 'Bad Request - Invalid credendtials'})
-        resp.status_code = 400
-        return resp
-
+   return 'hello'
 
 if __name__ == '__main__':
     app.run(debug = True)
