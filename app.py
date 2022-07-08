@@ -40,7 +40,6 @@ def signup_form():
             
 @app.route('/login_validation', methods=['POST'])
 def login_validation():
-    r = ""
     if (request.method == 'POST'):
         if  request.form['username']!="" and request.form['password'] != "":
             username = request.form['username']
