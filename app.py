@@ -1,7 +1,11 @@
-from flask import Flask, render_template, request, redirect, url_for
+from ast import Return
+from flask import Flask, render_template, request, redirect, url_for, session
 import sqlite3
 
+from mysqlx import Session
+
 app = Flask(__name__)
+app.secret_key = "123"
 
 @app.route('/')
 def login():
@@ -31,12 +35,27 @@ def signup_form():
         else:
             msg = "Register failed"
             print(msg)
-    return render_template('signin.html', msg = msg)    
+    return render_template('signin.html')    
         
             
 @app.route('/login_validation', methods=['POST'])
 def login_validation():
-   return 'hello'
+    r = ""
+    if (request.method == 'POST'):
+        if  request.form['username']!="" and request.form['password'] != "":
+            username = request.form['username']
+            password = request.form['password']
+            conn = sqlite3.connect('mydatabase.db')
+            c = conn.cursor()
+            c.execute("SELECT * FROM register WHERE users= '"+username+"' and passwords= '"+password+"'")
+            r = c.fetchall()
+            for i in r:
+                if username == i[0] and password == i[1]:
+                    session["Loged in"] = True
+                    session["username"] = username
+                    return redirect(url_for("index"))
+        else:
+            return "Please enter valid username and password" 
 
 if __name__ == '__main__':
     app.run(debug = True)
