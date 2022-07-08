@@ -35,7 +35,7 @@ def signup_form():
         else:
             msg = "Register failed"
             print(msg)
-    return render_template('signin.html')    
+    return render_template('login.html')    
         
             
 @app.route('/login_validation', methods=['POST'])
@@ -48,12 +48,16 @@ def login_validation():
             c = conn.cursor()
             c.execute("SELECT * FROM register WHERE users= '"+username+"' and passwords= '"+password+"'")
             i = c.fetchone()
-            if username == i[0] and password == i[1]:
+            if i and username == i[0] and password == i[1]:
                 session["Loged in"] = True
                 session["username"] = username
                 return redirect(url_for("index"))
+            else:
+                return redirect(url_for("signin"))
+
         else:
             return "Please enter valid username and password" 
+            
 
 if __name__ == '__main__':
     app.run(debug = True)
