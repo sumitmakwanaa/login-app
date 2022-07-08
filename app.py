@@ -48,12 +48,11 @@ def login_validation():
             conn = sqlite3.connect('mydatabase.db')
             c = conn.cursor()
             c.execute("SELECT * FROM register WHERE users= '"+username+"' and passwords= '"+password+"'")
-            r = c.fetchall()
-            for i in r:
-                if username == i[0] and password == i[1]:
-                    session["Loged in"] = True
-                    session["username"] = username
-                    return redirect(url_for("index"))
+            i = c.fetchone()
+            if username == i[0] and password == i[1]:
+                session["Loged in"] = True
+                session["username"] = username
+                return redirect(url_for("index"))
         else:
             return "Please enter valid username and password" 
 
