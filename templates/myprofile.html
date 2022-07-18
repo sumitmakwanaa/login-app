@@ -7,18 +7,10 @@
     <title>Index</title>
 </head>
 <body>
-    <nav>
-        <ul>
-            <li><a href="/">Log in</a></li>
-            <li><a href="/signin">Sign in</a></li>
-        </ul>
-    </nav>
-    <div>
-        <div>{{session.username}}
+            {{session.username}}
             {% if msg %}
             <h1> {{ msg }}!</h1>
             {% endif %}
-        </div>
-    </div>
+            <a href="/edit_profile"> edit profile </a>
 </body>
 </html>

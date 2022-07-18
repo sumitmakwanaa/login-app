@@ -14,9 +14,9 @@ def login():
 def signin():
     return render_template('signin.html')
 
-@app.route('/index')
+@app.route('/editprofilepage')
 def index():
-    return 'index'
+    return render_template('editprofile.html')
 
 @app.route('/signup_form', methods=['POST'])
 def signup_form():
@@ -24,9 +24,11 @@ def signup_form():
         if  request.form['username']!="" and request.form['password'] != "":
             username = request.form['username']
             password = request.form['password']
+            fname = request.form['fname']
+            lname = request.form['lname']
             conn = sqlite3.connect('mydatabase.db')
             c = conn.cursor()
-            c.execute("INSERT INTO register VALUES('"+username+"','"+password+"')")
+            c.execute("INSERT INTO register VALUES('"+username+"','"+password+"','"+fname+"','"+lname+"')")
             msg = "Register successfully"
             conn.commit()
             conn.close()
@@ -34,9 +36,7 @@ def signup_form():
         else:
             msg = "Register failed"
             return render_template('signin.html', msg=msg)
-       
-        
-            
+                   
 @app.route('/login_validation', methods=['POST'])
 def login_validation():
     if (request.method == 'POST'):
@@ -51,7 +51,7 @@ def login_validation():
                 session["Loged in"] = True
                 session["username"] = username
                 msg = "Login successfully"
-                return render_template('index.html', msg = msg)
+                return render_template('myprofile.html', msg = msg)
             else:
                 msg = "Couldn't login'"
                 return render_template('login.html', msg=msg)  
@@ -59,6 +59,11 @@ def login_validation():
         else:
             return "Please enter valid username and password" 
             
+@app.route('/editprofile', methods=['POST'])
+def editprofileform():
+    if [request.method == 'POST']:
+        return 'hello'
+        
 
 if __name__ == '__main__':
     app.run(debug = True)
